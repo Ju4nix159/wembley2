@@ -1,0 +1,1 @@
+<?php header("Location: wembley/html/pagina_principal.php")?>
