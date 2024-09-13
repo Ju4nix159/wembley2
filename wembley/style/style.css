@@ -426,7 +426,7 @@ html {
   font-size: 20px;
 }
 
-form {
+.form-1 {
   display:flex;
   flex-direction: column;
   text-align: center;
@@ -494,7 +494,7 @@ form {
   color:#f700ff;
 }
 
-form > button {
+.form-1 > button {
   width: 100%;
   padding: 10px;
   outline: none;
@@ -506,7 +506,7 @@ form > button {
   font-size: 1rem;
 }
 
-form > button:hover,
+.form-1 > button:hover,
 .contenedor_informacion__links > a:hover {
   background: #f700ff(172, 16, 47);
 }

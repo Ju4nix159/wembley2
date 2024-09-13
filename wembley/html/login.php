@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $result_check_email->fetch(PDO::FETCH_ASSOC);
             
 
-            if (password_verify($password,$user['password'])) {
+            if (password_verify($password,$user['clave'])) {
 
 
                 $sql_id_usuario = $con->prepare("SELECT id_usuario FROM usuarios WHERE email = :email");
@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['id_usuario'] = $id_usuario;
 
             
-                if ($permisos == 1) {
+                if ($permisos == 2) {
                     
                     header("Location: paneluser.php");
-                } else if ($permisos == 2) {
+                } else if ($permisos == 1) {
                     header("Location: admin/dashboard.php");
                 }
             } else {
@@ -122,7 +122,7 @@ function showErrorAlert($errorMessage)
     <div class="contenedor_sesion">
         <div class="form-box">
             <div class="form-value">
-                <form action=" <?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <form class="form-1" action=" <?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                     <h2 class="dispaly-2 text-white p-5">Iniciar Sesión</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>

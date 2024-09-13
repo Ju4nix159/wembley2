@@ -28,7 +28,7 @@
                 <a class="btn btn-primary btn-lg" href="https://www.instagram.com/wembleyutileria/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
             </div>
         </div>
-        <form>
+        <form class="form-1">
             <div class="contenedor_contacto__input">
                 <input type="text" placeholder="Nombre y apellido" required>
                 <i class="fa-solid fa-user"></i>

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // El usuario no existe, proceder con el registro
             // Insertar el nuevo usuario en la base de datos
             $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO usuarios (email, password) VALUES ('$email', '$password_hashed')";
+            $sql = "INSERT INTO usuarios (email, clave) VALUES ('$email', '$password_hashed')";
 
             if ($conexion->query($sql) == TRUE) {
                 // Registro exitoso, mostrar SweetAlert
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="contenedor_sesion">
             <div class="form-box">
                 <div class="form-value">
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                    <form class="form-1" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                         <h2 class="text-white p-5" >Registrarse</h2>
                         <div class="inputbox">
                             <ion-icon name="mail-outline"></ion-icon>
