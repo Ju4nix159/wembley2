@@ -1,35 +1,35 @@
 <?php
-include ("../config/database.php");
-include ("../html/navbar.php");
+include("../config/database.php");
+include("../html/navbar.php");
 
-$id_usuario =  $_SESSION['id_usuario'];
 
 // Verificar si hay una sesión de usuario iniciada
-if (isset($_SESSION['email']) && !empty($_SESSION['email']) && ($_SESSION['permisos'] == 1 || $_SESSION['permisos'] == 2)) {
-    $email = $_SESSION['email'];
-
+if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['permiso'] == 1 || $_SESSION['permiso'] == 2)) {
     /* INFORMACION DEL USUARIO */
     // Preparar y ejecutar la consulta SQL para obtener la información del usuario
-    $sql_info_usuario = $con->prepare("SELECT i.*
-        FROM info_usuarios i
-        WHERE i.id_usuario = :id_usuario");
-    $sql_info_usuario->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $sql_info_usuario = $con->prepare("SELECT i.id_usuario, i.nombre, i.apellido, i.dni, i.fecha_nacimiento, i.telefono, s.nombre as sexo, s.id_sexo FROM info_usuarios i JOIN sexos s ON i.id_sexo = s.id_sexo  WHERE i.id_usuario = :id_usuario;");
+    $sql_info_usuario->bindParam(':id_usuario', $_SESSION["id_usuario"], PDO::PARAM_INT);
     $sql_info_usuario->execute();
-    $resultado_info_usuario = $sql_info_usuario->fetch(PDO::FETCH_ASSOC);
-    
+    $info_usuario = $sql_info_usuario->fetch(PDO::FETCH_ASSOC);
+
+    $sql_sexos = $con->query("SELECT id_sexo, nombre FROM sexos");
+    $sql_sexos->execute();
+    $sexos = $sql_sexos->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+
     /* PEDIDOS DEL USUARIO */
     // Preparar y ejecutar la consulta SQL para obtener los pedidos del usuario
-    $sql_pedidos = $con->prepare("SELECT id_pedido,fecha FROM pedidos WHERE id_usuario = :id_usuario");
+    /* $sql_pedidos = $con->prepare("SELECT id_pedido,fecha FROM pedidos WHERE id_usuario = :id_usuario");
     $sql_pedidos->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $sql_pedidos->execute();
-    // Obtener todos los pedidos del usuario
-    $resultado_pedidos = $sql_pedidos->fetchAll(PDO::FETCH_ASSOC);
-    
-
-}?>
+    $resultado_pedidos = $sql_pedidos->fetchAll(PDO::FETCH_ASSOC); */
+} ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,20 +41,22 @@ if (isset($_SESSION['email']) && !empty($_SESSION['email']) && ($_SESSION['permi
             object-fit: cover;
             border-radius: 50%;
         }
+
         .hidden {
             display: none;
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body text-center">
-                        <img src="/placeholder.svg?height=100&width=100" alt="Avatar" class="user-avatar mb-3">
-                        <h3 class="card-title">Juan Pérez</h3>
-                        <p class="card-text">@juanperez</p>
+                        <img src="../imagen/noimagen.jpg" alt="Avatares" class="user-avatar mb-3">
+                        <h3 class="card-title"><?php echo $info_usuario["nombre"] . " " . $info_usuario["apellido"] ?></h3>
+                        <p class="card-text"><?php echo $_SESSION["usuario"] ?></p>
                     </div>
                 </div>
             </div>
@@ -75,32 +77,49 @@ if (isset($_SESSION['email']) && !empty($_SESSION['email']) && ($_SESSION['permi
                         <div class="card mt-3">
                             <div class="card-body">
                                 <h5 class="card-title">Información Personal</h5>
-                                <p><strong>Nombre:</strong> Juan Pérez</p>
-                                <p><strong>Email:</strong> juan.perez@example.com</p>
-                                <p><strong>Teléfono:</strong> +34 123 456 789</p>
-                                <p><strong>Fecha de Nacimiento:</strong> 15/05/1985</p>
+                                <p><strong>Nombre:</strong><?php echo $info_usuario["nombre"] . " " . $info_usuario["apellido"] ?></p>
+                                <p><strong>Email:</strong> <?php echo $_SESSION["usuario"] ?></p>
+                                <p><strong>Teléfono:</strong><?php echo $info_usuario["telefono"] ?></p>
+                                <p><strong>Fecha de Nacimiento:</strong><?php echo $info_usuario["fecha_nacimiento"] ?></p>
+                                <p><strong>D.N.I:</strong> <?php echo $info_usuario["dni"] ?></p>
+                                <p><strong>sexo:</strong> <?php echo $info_usuario["sexo"] ?></p>
+
                                 <button class="btn btn-primary mt-3" onclick="toggleEditInfo()">Editar Información</button>
                             </div>
                         </div>
                         <div id="editInfoForm" class="card mt-3 hidden">
                             <div class="card-body">
                                 <h5 class="card-title">Editar Información Personal</h5>
-                                <form>
+                                <form method="POST" action="<?php ?>">
+                                    <input type="hidden" name="id_usuario" value="<?php echo $_SESSION["id_usuario"] ?>">
                                     <div class="mb-3">
-                                        <label for="editName" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="editName" value="Juan Pérez">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" value="<?php echo $info_usuario["nombre"] ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="editEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="editEmail" value="juan.perez@example.com">
+                                        <label for="apellido" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="apellido" value="<?php echo $info_usuario["apellido"] ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="editPhone" class="form-label">Teléfono</label>
-                                        <input type="tel" class="form-control" id="editPhone" value="+34 123 456 789">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="telefono" value="<?php echo $info_usuario["telefono"] ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="editBirthdate" class="form-label">Fecha de Nacimiento</label>
-                                        <input type="date" class="form-control" id="editBirthdate" value="1985-05-15">
+                                        <input type="date" class="form-control" id="editBirthdate" value="<?php echo $info_usuario["fecha_nacimiento"] ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="sexo">Selecciona el sexo:</label>
+                                        <select class="form-select form-label" id="sexo" name="id_sexo">
+                                            <?php foreach ($sexos as $sexo): ?>
+                                                <option value="<?php echo $sexo['id_sexo']; ?>"
+                                                    <?php if ($sexo['id_sexo'] == $info_usuario["id_sexo"]): ?>
+                                                    selected
+                                                    <?php endif; ?>>
+                                                    <?php echo htmlspecialchars($sexo['nombre']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                                     <button type="button" class="btn btn-secondary" onclick="toggleEditInfo()">Cancelar</button>
@@ -251,9 +270,16 @@ if (isset($_SESSION['email']) && !empty($_SESSION['email']) && ($_SESSION['permi
             orderNumberSpan.textContent = orderNumber;
             orderProductsList.innerHTML = '';
 
-            const products = [
-                { name: 'Producto 1', quantity: 2, price: 25.00 },
-                { name: 'Producto 2', quantity: 1, price: 50.00 },
+            const products = [{
+                    name: 'Producto 1',
+                    quantity: 2,
+                    price: 25.00
+                },
+                {
+                    name: 'Producto 2',
+                    quantity: 1,
+                    price: 50.00
+                },
             ];
 
             let total = 0;
@@ -285,17 +311,37 @@ if (isset($_SESSION['email']) && !empty($_SESSION['email']) && ($_SESSION['permi
             editForm.classList.remove('hidden');
 
             const addressData = {
-                principal: { line1: 'Calle Mayor 123', city: 'Madrid', postalCode: '28001', country: 'España' },
-                secundario: { line1: 'Avenida del Mar 45', city: 'Marbella', postalCode: '29601', country: 'España' },
-                otro1: { line1: 'Calle del Sol 78', city: 'Sevilla', postalCode: '41001', country: 'España' },
-                otro2: { line1: 'Paseo de Gracia 43', city: 'Barcelona', postalCode: '08007', country: 'España' }
+                principal: {
+                    line1: 'Calle Mayor 123',
+                    city: 'Madrid',
+                    postalCode: '28001',
+                    country: 'España'
+                },
+                secundario: {
+                    line1: 'Avenida del Mar 45',
+                    city: 'Marbella',
+                    postalCode: '29601',
+                    country: 'España'
+                },
+                otro1: {
+                    line1: 'Calle del Sol 78',
+                    city: 'Sevilla',
+                    postalCode: '41001',
+                    country: 'España'
+                },
+                otro2: {
+                    line1: 'Paseo de Gracia 43',
+                    city: 'Barcelona',
+                    postalCode: '08007',
+                    country: 'España'
+                }
             };
 
             const address = addressData[addressType];
             document.getElementById('editAddressLine1').value = address.line1;
             document.getElementById('editAddressCity').value = address.city;
             document.getElementByI
-d('editAddressPostalCode').value = address.postalCode;
+            d('editAddressPostalCode').value = address.postalCode;
             document.getElementById('editAddressCountry').value = address.country;
         }
 
@@ -334,5 +380,5 @@ d('editAddressPostalCode').value = address.postalCode;
     </script>
 
 </body>
-</html>
 
+</html>
