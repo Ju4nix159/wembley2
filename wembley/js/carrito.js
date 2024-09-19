@@ -146,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    // Limpiar el carrito en el localStorage
                     localStorage.removeItem('cartProducts');
                     localStorage.removeItem('productosParaCheckout');
                     comprarCarrito.classList.add('hidden');
@@ -171,9 +170,7 @@ const comprarCarrito = document.querySelector('.comprar_carrito');
 const enviarInformacionACheckout = () => {
     localStorage.setItem('productosParaCheckout', JSON.stringify(allProducts));
 
-    // Redireccionar a la página de checkout
-    window.location.href = 'checkout.php'; // Reemplaza 'ruta_de_tu_pagina_de_checkout' con la URL de tu página de checkout
-};
+    window.location.href = 'checkout.php'; 
 
 // Función que se ejecuta cuando se hace clic en el botón comprarCarrito
 const handleCompraCarritoClick = () => {
@@ -182,3 +179,4 @@ const handleCompraCarritoClick = () => {
 
 // Agregar evento clic al botón comprarCarrito
 comprarCarrito.addEventListener('click', handleCompraCarritoClick);
+};

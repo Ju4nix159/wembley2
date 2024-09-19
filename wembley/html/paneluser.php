@@ -2,13 +2,14 @@
 include("../config/database.php");
 include("../html/navbar.php");
 
-
 // Verificar si hay una sesión de usuario iniciada
 if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['permiso'] == 1 || $_SESSION['permiso'] == 2)) {
+
+    $id_usuario = $_SESSION["id_usuario"];
     /* INFORMACION DEL USUARIO */
     // Preparar y ejecutar la consulta SQL para obtener la información del usuario
     $sql_info_usuario = $con->prepare("SELECT i.id_usuario, i.nombre, i.apellido, i.dni, i.fecha_nacimiento, i.telefono, s.nombre as sexo, s.id_sexo FROM info_usuarios i JOIN sexos s ON i.id_sexo = s.id_sexo  WHERE i.id_usuario = :id_usuario;");
-    $sql_info_usuario->bindParam(':id_usuario', $_SESSION["id_usuario"], PDO::PARAM_INT);
+    $sql_info_usuario->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $sql_info_usuario->execute();
     $info_usuario = $sql_info_usuario->fetch(PDO::FETCH_ASSOC);
 
@@ -19,12 +20,10 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
 
 
 
-    /* PEDIDOS DEL USUARIO */
-    // Preparar y ejecutar la consulta SQL para obtener los pedidos del usuario
-    /* $sql_pedidos = $con->prepare("SELECT id_pedido,fecha FROM pedidos WHERE id_usuario = :id_usuario");
+    $sql_pedidos = $con->prepare("SELECT * FROM pedidos WHERE id_usuario = :id_usuario");
     $sql_pedidos->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $sql_pedidos->execute();
-    $resultado_pedidos = $sql_pedidos->fetchAll(PDO::FETCH_ASSOC); */
+    $resultado_pedidos = $sql_pedidos->fetchAll(PDO::FETCH_ASSOC);
 } ?>
 
 <!DOCTYPE html>
@@ -78,7 +77,6 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
                             <div class="card-body">
                                 <h5 class="card-title">Información Personal</h5>
                                 <p><strong>Nombre:</strong><?php echo $info_usuario["nombre"] . " " . $info_usuario["apellido"] ?></p>
-                                <p><strong>Email:</strong> <?php echo $_SESSION["usuario"] ?></p>
                                 <p><strong>Teléfono:</strong><?php echo $info_usuario["telefono"] ?></p>
                                 <p><strong>Fecha de Nacimiento:</strong><?php echo $info_usuario["fecha_nacimiento"] ?></p>
                                 <p><strong>D.N.I:</strong> <?php echo $info_usuario["dni"] ?></p>
@@ -90,27 +88,31 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
                         <div id="editInfoForm" class="card mt-3 hidden">
                             <div class="card-body">
                                 <h5 class="card-title">Editar Información Personal</h5>
-                                <form method="POST" action="<?php ?>">
+                                <form method="POST" action="admin/procesar_bd.php">
                                     <input type="hidden" name="id_usuario" value="<?php echo $_SESSION["id_usuario"] ?>">
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="nombre" value="<?php echo $info_usuario["nombre"] ?>">
+                                        <input type="text" class="form-control" name="nombre" id="nombre" value="<?php echo $info_usuario["nombre"] ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="apellido" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="apellido" value="<?php echo $info_usuario["apellido"] ?>">
+                                        <label for="apellido" class="form-label">apellido</label>
+                                        <input type="text" class="form-control" id="apellido" name="apellido" value="<?php echo $info_usuario["apellido"] ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="telefono" class="form-label">Teléfono</label>
-                                        <input type="tel" class="form-control" id="telefono" value="<?php echo $info_usuario["telefono"] ?>">
+                                        <input type="tel" class="form-control" id="telefono" name="telefono" value="<?php echo $info_usuario["telefono"] ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="editBirthdate" class="form-label">Fecha de Nacimiento</label>
-                                        <input type="date" class="form-control" id="editBirthdate" value="<?php echo $info_usuario["fecha_nacimiento"] ?>">
+                                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="<?php echo $info_usuario["fecha_nacimiento"] ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dni" class="form-label">Fecha de Nacimiento</label>
+                                        <input type="text" class="form-control" id="dni" name="dni" value="<?php echo $info_usuario["dni"] ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="sexo">Selecciona el sexo:</label>
-                                        <select class="form-select form-label" id="sexo" name="id_sexo">
+                                        <select class="form-select form-label" id="sexo" name="sexo">
                                             <?php foreach ($sexos as $sexo): ?>
                                                 <option value="<?php echo $sexo['id_sexo']; ?>"
                                                     <?php if ($sexo['id_sexo'] == $info_usuario["id_sexo"]): ?>
@@ -121,13 +123,13 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                    <button type="submit" name="editar_informacion_personal" class="btn btn-primary">Guardar Cambios</button>
                                     <button type="button" class="btn btn-secondary" onclick="toggleEditInfo()">Cancelar</button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                    <div  class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                         <div class="card mt-3">
                             <div class="card-body">
                                 <h5 class="card-title">Resumen de Pedidos</h5>
@@ -142,47 +144,38 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>#1234</td>
-                                            <td>01/06/2023</td>
-                                            <td>$150.00</td>
-                                            <td><span class="badge bg-success">Entregado</span></td>
-                                            <td><button class="btn btn-sm btn-info" onclick="showOrderDetails(1234)">Ver</button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>#1235</td>
-                                            <td>15/06/2023</td>
-                                            <td>$75.50</td>
-                                            <td><span class="badge bg-warning">En proceso</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-info" onclick="showOrderDetails(1235)">Ver</button>
-                                                <button class="btn btn-sm btn-danger" onclick="cancelOrder(1235)">Cancelar pedido</button>
-                                            </td>
-                                        </tr>
+                                        <?php foreach ($resultado_pedidos as $pedido) { ?>
+                                            <tr>
+                                                <td>#<?php echo $pedido["id_pedido"] ?></td>
+                                                <td><?php echo $pedido["fecha"] ?></td>
+                                                <td><?php echo $pedido["total"] ?></td>
+                                                <td>
+                                                    <?php
+                                                    if (in_array($pedido["id_estado_pedido"], [1, 2])) { ?>
+                                                        <span class="badge bg-warning">En proceso</span>
+                                                    <?php
+                                                    } elseif (in_array($pedido["id_estado_pedido"], [3, 4])) { ?>
+                                                        <span class="badge bg-success">Entregado</span>
+                                                    <?php
+                                                    } else { ?>
+                                                        <span class="badge bg-danger">Cancelado</span>
+                                                    <?php
+                                                    } ?>
+                                                </td>
+                                                <td>
+                                                    <button onclick="ver_pedido(<?php echo $pedido['id_pedido']; ?>)" class="btn btn-sm btn-info">Ver</button>
+                                                    <?php if ($pedido["id_estado_pedido"] == 5) { ?>
+                                                        <button class="btn btn-sm btn-danger" onclick="cancelOrder(1235)">Cancelar</button>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div id="orderDetails" class="card mt-3 hidden">
-                            <div class="card-body">
-                                <h5 class="card-title">Resumen de Pedido #<span id="orderNumber"></span></h5>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio Unitario</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="orderProductsList">
-                                    </tbody>
-                                </table>
-                                <div class="text-end">
-                                    <strong>Total del Pedido: $<span id="orderTotal"></span></strong>
-                                </div>
-                                <button class="btn btn-secondary mt-3" onclick="hideOrderDetails()">Cerrar</button>
-                            </div>
+                        <div id="detalle-pedido" class="card mt-3 hidden">
+                            
                         </div>
                     </div>
                     <div class="tab-pane fade" id="addresses" role="tabpanel" aria-labelledby="addresses-tab">
@@ -259,50 +252,26 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario']) && ($_SESSION['p
             const editForm = document.getElementById('editInfoForm');
             infoCard.classList.toggle('hidden');
             editForm.classList.toggle('hidden');
+            form.reset();
         }
 
-        function showOrderDetails(orderNumber) {
-            const orderDetails = document.getElementById('orderDetails');
-            const orderNumberSpan = document.getElementById('orderNumber');
-            const orderProductsList = document.getElementById('orderProductsList');
-            const orderTotal = document.getElementById('orderTotal');
-
-            orderNumberSpan.textContent = orderNumber;
-            orderProductsList.innerHTML = '';
-
-            const products = [{
-                    name: 'Producto 1',
-                    quantity: 2,
-                    price: 25.00
-                },
-                {
-                    name: 'Producto 2',
-                    quantity: 1,
-                    price: 50.00
-                },
-            ];
-
-            let total = 0;
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.quantity}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td>$${(product.quantity * product.price).toFixed(2)}</td>
-                `;
-                orderProductsList.appendChild(row);
-                total += product.quantity * product.price;
-            });
-
-            orderTotal.textContent = total.toFixed(2);
-            orderDetails.classList.remove('hidden');
+        function ver_pedido(idPedido) {
+            fetch('detalle_pedido.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'id_pedido=' + idPedido
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Insertar el contenido en el lugar que desees en tu página
+                    document.getElementById('detalle-pedido').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
         }
 
-        function hideOrderDetails() {
-            const orderDetails = document.getElementById('orderDetails');
-            orderDetails.classList.add('hidden');
-        }
+
 
         function showEditAddress(addressType) {
             const addressesCard = document.querySelector('#addresses .card');

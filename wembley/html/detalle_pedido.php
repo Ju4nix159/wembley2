@@ -1,29 +1,31 @@
 <?php
-// Incluir archivos necesarios
-include 'header.php';
+include '../../config/database.php';
 
 
 
-// Obtener el id_pedido desde la URL
-$id_pedido = isset($_GET['id']) ? $_GET['id'] : null;
-
-// Verificar si se proporcionó un id_pedido válido
-if (!$id_pedido) {
-    // Redireccionar al usuario a alguna página de error o página de inicio
-    header("Location: error.php");
-    exit;
+// archivo "detalle_pedido.php"
+if (isset($_POST['id_pedido'])) {
+    $id_pedido = $_POST['id_pedido'];
+    
+    // Aquí haces la consulta a la base de datos para obtener el detalle del pedido
+    $sql_pedidos = $con->prepare("SELECT * FROM pedidos WHERE id_pedido = :id_pedido");    
+    // Generas el HTML del detalle del pedido
+    if ($detalle_pedido) {
+        echo '<h5>Detalle del Pedido #' . $detalle_pedido["id_pedido"] . '</h5>';
+        echo '<p>Fecha: ' . $detalle_pedido["fecha"] . '</p>';
+        echo '<p>Total: ' . $detalle_pedido["total"] . '</p>';
+        echo '<p>Estado: ' . $detalle_pedido["estado"] . '</p>';
+        // Y otros detalles adicionales
+    } else {
+        echo '<p>No se encontró el detalle del pedido.</p>';
+    }
 }
 
-// Conexión a la base de datos
-$db = new Database();
-$con = $db->conectar();
 
-// Obtener el email del usuario de la sesión
-$email = $_SESSION['email'];
 
-$userid = $_SESSION['id_usuario'];
 
-// Consultar la base de datos para obtener información del pedido
+
+
 $consulta_pedido = "
     SELECT pe.fecha, pp.id_compra, p.nombre AS nombre_producto, p.descripcion AS descripcion_producto, pp.cantidad, pp.precio
     FROM pedidos pe
@@ -42,61 +44,22 @@ $pedido = $stmt_pedido->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Pedido</title>
-</head>
-<body>
-    <div class="contenedor_resumen_pedido">
-        <h2 class="titulo centrar">Resumen Pedido</h2>
-        <div class="contenedor_resumen_pedido__texto">
-            <p>pedido n°: <?php echo $id_pedido; ?></p>
-            <p>Fecha: <?php echo date("d/m/Y", strtotime($pedido[0]['fecha'])); ?></p>
-
-
-        </div>
-
-        <div class="tabla">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto ID</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Precio/U</th>
-                        <th>Precio total</th>
-                    </tr>
-                </thead>
-                <tbody class="cuerpo_tabla" id='table_body'>
-                    <?php
-                    // Iterar a través de los productos del pedido
-                    $precio_total_pedido = 0;
-                    foreach ($pedido as $producto) {
-                        $precio_total_producto = $producto['precio'] * $producto['cantidad'];
-                        $precio_total_pedido += $precio_total_producto;
-                        echo "<tr>";
-                        echo "<td>{$producto['id_compra']}</td>";
-                        echo "<td>{$producto['nombre_producto']}</td>";
-                        echo "<td>{$producto['cantidad']}</td>";
-                        echo "<td>{$producto['precio']}</td>";
-                        echo "<td>$precio_total_producto</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-                <tfoot>
-                    <tr id='columna_total'>
-                        <td colspan="4">Total</td>
-                        <td id='total_precio'><?php echo $precio_total_pedido; ?></td>
-                    </tr>
-                </tfoot>
-            </table>
-            <a class="boton_principal" href="paneluser.php">Cerrar</a>
-        </div>  
+<div class="card-body">
+    <h5 class="card-title">Resumen de Pedido #<span id="orderNumber"></span></h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="orderProductsList">
+        </tbody>
+    </table>
+    <div class="text-end">
+        <strong>Total del Pedido: $<span id="orderTotal"></span></strong>
     </div>
-</body>
-</html>
-
+    <button class="btn btn-secondary mt-3" onclick="hideOrderDetails()">Cerrar</button>
+</div>

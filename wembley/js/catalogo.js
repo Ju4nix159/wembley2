@@ -97,4 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return categoriasSeleccionadas;
     }
+
+    
 });
+
