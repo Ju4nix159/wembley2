@@ -84,10 +84,10 @@
                   <tbody>
                   <?php
                     $sql_productos = $con->prepare
-                    ("SELECT p.*, c.nombre_categoria AS nombre_categoria, e.nombre_estado_producto AS nombre_estado, COUNT(i.id_imagen) AS cantidad_imagenes
+                    ("SELECT p.*, c.nombre AS nombre_categoria, e.nombre AS nombre_estado, COUNT(i.id_imagen) AS cantidad_imagenes
                     FROM productos AS p
-                    LEFT JOIN categoria AS c ON p.id_categoria = c.id_categoria
-                    LEFT JOIN estado_producto AS e ON p.id_estado = e.id_estado_producto
+                    LEFT JOIN categorias AS c ON p.id_categoria = c.id_categoria
+                    LEFT JOIN estados_productos AS e ON p.id_estado = e.id_estado_producto
                     LEFT JOIN imagenes AS i ON p.id_producto = i.id_producto
                     GROUP BY p.id_producto
                     ");

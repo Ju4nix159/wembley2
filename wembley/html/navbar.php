@@ -74,7 +74,7 @@
                                     </svg>
                                     <?php if (isset($_SESSION["usuario"])) {
                                         if ($_SESSION["permiso"] == 1) { ?>
-                                            <a href="../html/paneladmin.php" class="btn">Panel Admin</a>
+                                            <a href="../html/admin/dashboard.php" class="btn">Panel Admin</a>
                                         <?php } else { ?>
                                             <a href="../html/paneluser.php" class="btn">Panel Usuario</a>
                                         <?php } ?>

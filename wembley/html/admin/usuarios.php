@@ -68,10 +68,10 @@
                   <?php
                     // Obtener datos de usuarios
                     $sqlUsuarios = $con->prepare("
-                    SELECT u.id_usuario, u.email, p.nombre_permiso AS nombre_permiso, e.nombre_estado_usuario AS nombre_estado
+                    SELECT u.id_usuario, u.email, p.nombre AS nombre_permiso, e.nombre AS nombre_estado
                     FROM usuarios u
                     INNER JOIN permisos p ON u.id_permiso = p.id_permiso
-                    INNER JOIN estado_usuario e ON u.id_estado_usuario = e.id_estado_usuario
+                    INNER JOIN estados_usuarios e ON u.id_estado_usuario = e.id_estado_usuario
                 ");
                     $sqlUsuarios->execute();
                     $usuarios = $sqlUsuarios->fetchAll(PDO::FETCH_ASSOC);

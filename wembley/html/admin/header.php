@@ -1,20 +1,6 @@
 <?php
   session_start();
-  require '../../config/database.php';
-  $db = new Database();
-  $con = $db->conectar(); 
-  $id_usuario = $_SESSION['id_usuario'];
-  $nombre_usuario = $_SESSION['email'];
-
-  $nombre_permiso = "";
-  if($_SESSION['permisos'] == 2){
-    $nombre_permiso = "Administrador";
-  }else{
-    $nombre_permiso = "Usuario";
-  }
-
-
-  
+  include '../../config/database.php';
 
 ?>
 
@@ -84,7 +70,7 @@
       <!-- Navbar Search -->
       <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs"><?php echo $nombre_permiso;?></span>
+              <span class="hidden-xs"><?php echo $_SESSION["permiso"];?></span>
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
@@ -92,7 +78,7 @@
                     <img src="../../imagen/logo.png" class="img-circle" alt="User Image">
 
                     <p>
-                    <?php echo $nombre_usuario; ?>
+                    <?php echo $_SESSION["usuario"]; ?>
                     </p>
                 </li>
                 <!-- Menu Footer-->
