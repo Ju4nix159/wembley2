@@ -73,7 +73,16 @@ $productos = $sql_productos->fetchAll(PDO::FETCH_ASSOC);
                                     <h5 class="card-title"><?php echo $producto["nombre_producto"] ?></h5>
                                     <p class="card-text"><strong> <?php echo number_format($producto["precio"], 2, '.', ','); ?></strong></p>
                                     <div class="d-flex justify-content-between">
-                                        <button class="btn btn-primary btn_añadir" data-producto-id="<?php echo $producto['id_producto']; ?>" data-producto-nombre="<?php echo $producto['nombre_producto']; ?>" data-producto-precio="<?php echo $producto['precio']; ?>">Añadir</button>
+                                        <button 
+                                            <?php if(!isset($_SESSION["usuario"])) {?>
+                                                onclick="mostrarModal()"
+                                            <?php } ?>
+                                            class="btn btn-primary btn_añadir" 
+                                            data-producto-id="<?php echo $producto['id_producto']; ?>" 
+                                            data-producto-nombre="<?php echo $producto['nombre_producto']; ?>" 
+                                            data-producto-precio="<?php echo $producto['precio']; ?>">
+                                            Añadir
+                                        </button>
                                         <a href="detalle.php?id_producto=<?php echo $producto['id_producto']; ?>" class="btn btn-secondary">Detalle</a>
                                     </div>
                                 </div>
@@ -85,29 +94,31 @@ $productos = $sql_productos->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
     <div class="modal fade" id="avisoModal" tabindex="-1" aria-labelledby="avisoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avisoModalLabel">Aviso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Para agregar productos al carrito, es necesario iniciar sesión.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="pagina-de-inicio-sesion.html" class="btn btn-primary">Ir a Iniciar Sesión</a>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avisoModalLabel">Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Para agregar productos al carrito, es necesario iniciar sesión.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a href="pagina-de-inicio-sesion.html" class="btn btn-primary">Ir a Iniciar Sesión</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <?php include("footer.php") ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const añadir = document.querySelectorAll('.btn_añadir');
-        
+        function mostrarModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('avisoModal'))
+            myModal.show()
+        }
     </script>
     <script src="../js/catalogo.js"></script>
 

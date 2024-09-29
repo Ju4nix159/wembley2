@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
 
-            total = total + parseInt(producto.cantidad * parseFloat(producto.precio.replace(/[^0-9.-]+/g,"")));
+            total = total + producto.cantidad * parseFloat(producto.precio.replace(/[^0-9.-]+/g,""));
             totalProductos = totalProductos + producto.cantidad;
 
         });

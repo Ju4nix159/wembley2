@@ -6,16 +6,7 @@
   $id_usuario = $_SESSION['id_usuario'];
   $nombre_usuario = $_SESSION['email'];
 
-  $nombre_permiso = "";
-  if($_SESSION['permisos'] == 2){
-    $nombre_permiso = "Administrador";
-  }else{
-    $nombre_permiso = "Usuario";
-  }
-
-
   
-
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +75,7 @@
       <!-- Navbar Search -->
       <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs"><?php echo $nombre_permiso;?></span>
+              <span class="hidden-xs"></span>
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
