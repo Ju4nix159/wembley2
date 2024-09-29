@@ -1,5 +1,6 @@
 <?php
   session_start();
+<<<<<<< HEAD
   require '../../config/database.php';
   $db = new Database();
   $con = $db->conectar(); 
@@ -7,6 +8,10 @@
   $nombre_usuario = $_SESSION['email'];
 
   
+=======
+  include '../../config/database.php';
+
+>>>>>>> 950b3f561c8cd87f4625096ac549610ec096fa3e
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +80,11 @@
       <!-- Navbar Search -->
       <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+<<<<<<< HEAD
               <span class="hidden-xs"></span>
+=======
+              <span class="hidden-xs"><?php echo $_SESSION["permiso"];?></span>
+>>>>>>> 950b3f561c8cd87f4625096ac549610ec096fa3e
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
@@ -83,7 +92,7 @@
                     <img src="../../imagen/logo.png" class="img-circle" alt="User Image">
 
                     <p>
-                    <?php echo $nombre_usuario; ?>
+                    <?php echo $_SESSION["usuario"]; ?>
                     </p>
                 </li>
                 <!-- Menu Footer-->

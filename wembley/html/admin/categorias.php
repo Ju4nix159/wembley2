@@ -65,14 +65,14 @@
                   <tbody>
                   <?php
                     // Obtener datos de categoria
-                    $sqlcategorias = $con->prepare("SELECT * FROM categoria");
+                    $sqlcategorias = $con->prepare("SELECT * FROM categorias");
                     $sqlcategorias->execute();
                     $categorias = $sqlcategorias->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach($categorias as $categoria) { ?>
                         <tr>
                           <td> <?php echo $categoria['id_categoria'] ?> </td>
-                          <td> <?php echo $categoria['nombre_categoria'] ?> </td>
+                          <td> <?php echo $categoria['nombre'] ?> </td>
                           <td>
                               <a href="editar_categoria.php?id_categoria=<?php echo $categoria['id_categoria']; ?>" type="button" class="btn bg-orange btn-flat margin"> <i class="fas fa-user-edit"></i></a>
 
