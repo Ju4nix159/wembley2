@@ -70,26 +70,16 @@
                     <th>N_Producto</th>
                     <th>Nombre</th>
                     <th>Descripcion</th>
-                    <th>Precio</th>
-                    <th>Precio descuento</th>
-                    <th>% desc</th>
-                    <th>Destacado</th>
                     <th>Categoria</th>
-                    <th>Stock</th>
-                    <th>Estado</th>
-                    <th>Img</th>
                     <th>acciones</th>
                   </tr>
                   </thead>
                   <tbody>
                   <?php
                     $sql_productos = $con->prepare
-                    ("SELECT p.*, c.nombre AS nombre_categoria, e.nombre AS nombre_estado, COUNT(i.id_imagen) AS cantidad_imagenes
+                    ("SELECT p.*, c.nombre AS nombre_categoria
                     FROM productos AS p
                     LEFT JOIN categorias AS c ON p.id_categoria = c.id_categoria
-                    LEFT JOIN estados_productos AS e ON p.id_estado = e.id_estado_producto
-                    LEFT JOIN imagenes AS i ON p.id_producto = i.id_producto
-                    GROUP BY p.id_producto
                     ");
                     $sql_productos->execute();
                     $Productos = $sql_productos->fetchAll(PDO::FETCH_ASSOC);
@@ -100,26 +90,9 @@
                           <td> <?php echo $producto['n_producto'] ?></td>
                           <td> <?php echo $producto['nombre'] ?> </td>
                           <td> <?php echo $producto['descripcion'] ?></td>
-                          <td> <?php echo $producto['precio'] ?></td>
-                          <td> <?php echo $producto['precio_desc'] ?></td>
-                          <td> <?php echo $producto['descuento'] ?></td>
-                          <td> <?php if($producto['destacado']==0){
-                                  echo "No";
-                              }else{
-                                  echo "Si";
-                          } ?></td>
                           <td> <?php echo $producto['nombre_categoria'] ?></td>
-                          <td> <?php echo $producto['stock'] ?></td>
-                          <td> <?php echo $producto['nombre_estado'] ?></td>
-                          <td> <?php echo $producto['cantidad_imagenes'] ?></td>
                           <td>
-                              <a href="editar_producto.php?id_producto=<?php echo $producto['id_producto']; ?>" type="button" class="btn bg-orange btn-flat margin"> <i class="fas fa-user-edit"></i></a>
-                              <a  href="../../config/mercadolibre.php?id_producto=<?php echo $producto['id_producto']; ?>"
-                                  type="button"
-                                  class="btn bg-yellow btn-flat margin borrar_registro"
-                                  onclick="confirmarAccion(event, this.href)">
-                                  <i class="fas fa-solid fa-handshake"></i>
-                              </a>
+                              <a href="variantes.php?id_producto=<?php echo $producto['id_producto']; ?>" type="button" class="btn bg-orange btn-flat margin"> <i class="fas fa-user-edit"></i></a>
                             </td>
                         </tr>
                     <?php }?>
@@ -130,17 +103,9 @@
                     <th>N_Producto</th>
                     <th>Nombre</th>
                     <th>Descripcion</th>
-                    <th>Precio</th>
-                    <th>Precio descuento</th>
-                    <th>% desc</th>
-                    <th>Destacado</th>
                     <th>Categoria</th>
-                    <th>Stock</th>
-                    <th>Estado</th>
-                    <th>Img</th>
-                    <th>Acciones</th>
+                    <th>acciones</th>
                   </tr>
-
                   </tfoot>
                 </table>
               </div>
