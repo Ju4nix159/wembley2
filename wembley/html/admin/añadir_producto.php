@@ -69,60 +69,23 @@ include '../admin/footer.php';
                           <textarea id="descripcion" class="form-control" rows="3" name="descripcion" placeholder="Ingrese una descripción del producto"></textarea>
                         </div>
                       </div>
-                      <div class="form-group row">
-                        <label for="precio" class="col-sm-3 col-form-label">Precio</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" id="precio" name="precio" placeholder="Ingrese precio del producto" required>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="descuento" class="col-sm-3 col-form-label">% Descuento</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" id="descuento" name="descuento" placeholder="Ingrese el % de descuento aplicado al producto">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="destacado" class="col-sm-3 col-form-label">Destacado</label>
-                        <div class="col-sm-9">
-                          <select class="form-control" name="destacado">
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
-                          </select>
-                        </div>
-                      </div>
+
                       <div class="form-group row">
                         <label for="id_categoria" class="col-sm-3 col-form-label">Categorías</label>
                         <div class="col-sm-9">
                           <?php 
-                          $sql_nombre_categoria = $con->prepare("SELECT * FROM categoria");
+                          $sql_nombre_categoria = $con->prepare("SELECT * FROM categorias");
                           $sql_nombre_categoria->execute();
                           $nombres_categoria = $sql_nombre_categoria->fetchAll();
                           ?>
-                          <select class="form-control" name="id_categoria">
-                            <?php foreach ($nombres_categoria as $row) {
-                              $selected = ($row["id_categoria"] == $informacion_productos["id_categoria"]) ? "selected" : "";
-                              echo '<option value="' . $row["id_categoria"] . '" ' . $selected . '>' . $row["nombre_categoria"] . '</option>';
-                            } ?>
+                          <select class="form-control" name="id_categoria" required>
+                            <option value="" disabled selected>Eliga una categoria</option>
+                            <?php foreach ($nombres_categoria as $row) { ?>
+                              <option value="<?php echo $row["id_categoria"] ?>"> <?php echo $row["nombre"] ?> </option>
+                            <?php } ?>
                           </select>
                         </div>
                       </div>
-                      <div class="form-group row">
-                        <label for="stock" class="col-sm-3 col-form-label">Stock</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" id="stock" name="stock" placeholder="Ingrese stock del producto" required>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label for="imagen" class="col-sm-3 col-form-label">Imagen</label>
-                        <div class="col-sm-9">
-                          <input name="imagen" type="file" class="form-control-file" id="imagen" multiple accept="image/*" max="5" required>
-                          <p class="help-block">Añadir referencia a una imagen del producto (máximo 5 imágenes).</p>
-                          <div id="imagePreview" class="image-preview"></div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <!-- /.card-body -->

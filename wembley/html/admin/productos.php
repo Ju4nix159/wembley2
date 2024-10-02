@@ -15,15 +15,6 @@
 
 
 </head>
-<script>
-        function confirmarAccion(event, url) {
-            event.preventDefault(); // Previene la redirección inmediata
-            var confirmacion = confirm("¿Estás seguro de que deseas enviar este producto a mercado libre?");
-            if (confirmacion) {
-                window.location.href = url;
-            }
-        }
-    </script>
 <div class="wrapper">
 
 

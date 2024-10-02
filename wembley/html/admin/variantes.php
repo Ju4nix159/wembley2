@@ -1,9 +1,8 @@
 <?php
-
 include '../admin/header.php';
 include '../admin/aside.php';
 include '../admin/footer.php';
-
+$id_producto = $_GET['id_producto']
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,122 +10,112 @@ include '../admin/footer.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Panel administrado</title>
-
-
+    <link rel="stylesheet" href="css/app.css">
+    <title>Gestionar variantes</title>
 </head>
-<div class="wrapper">
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Gestion variantes</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item ">Gestion Productos</>
-                            <li class="breadcrumb-item active">variantes</>
 
-                            </li>
+<body>
+    <div class="wrapper">
 
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <?php
+                                
+                            ?>
+                            <h1 class="m-0">variante <?php echo $id_producto?></h1>
+                        </div><!-- /.col -->
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="dashboard.php">Inicio</a></li>
+                                <li class="breadcrumb-item"><a href="productos.php">Productos</a></li>
+                                <li class="breadcrumb-item active">Añadir Producto</li>
+                            </ol>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
 
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Info boxes -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Añadir Producto</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                <form class="form-horizontal" action="procesar_bd.php" method="POST" enctype="multipart/form-data">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label for="n_producto" class="col-sm-3 col-form-label">N_producto</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" id="n_producto" name="n_producto" placeholder="Ingrese un número de producto único" required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="nombre" class="col-sm-3 col-form-label">Nombre</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese nombre del producto" required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="descripcion" class="col-sm-3 col-form-label">Descripción</label>
+                                                    <div class="col-sm-9">
+                                                        <textarea id="descripcion" class="form-control" rows="3" name="descripcion" placeholder="Ingrese una descripción del producto"></textarea>
+                                                    </div>
+                                                </div>
 
-
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <!-- Info boxes -->
-                <div class="row">
-                    <div class="col-13">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Productos: nombre del producto </h3>
+                                                <div class="form-group row">
+                                                    <label for="id_categoria" class="col-sm-3 col-form-label">Categorías</label>
+                                                    <div class="col-sm-9">
+                                                        <?php
+                                                        $sql_nombre_categoria = $con->prepare("SELECT * FROM categorias");
+                                                        $sql_nombre_categoria->execute();
+                                                        $nombres_categoria = $sql_nombre_categoria->fetchAll();
+                                                        ?>
+                                                        <select class="form-control" name="id_categoria" required>
+                                                            <option value="" disabled selected>Eliga una categoria</option>
+                                                            <?php foreach ($nombres_categoria as $row) { ?>
+                                                                <option value="<?php echo $row["id_categoria"] ?>"> <?php echo $row["nombre"] ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                        <div class="card-footer">
+                                            <button type="submit" name="añadir_producto" class="btn btn-info">Guardar</button>
+                                            <a class="btn btn-default float-right" href="productos.php">Cancelar</a>
+                                        </div>
+                                        <!-- /.card-footer -->
+                                </form>
                             </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="registros" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>variante</th>
-                                            <th>color</th>
-                                            <th>talles disponibles</th>
-                                            <th>precio</th>
-                                            <th>descuento</th>
-                                            <th>destacado</th>
-                                            <th>stock</th>
-                                            <th>estado</th>
-                                            <th>acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $sql_productos = $con->prepare("SELECT p.*, c.nombre AS nombre_categoria
-                    FROM productos AS p
-                    LEFT JOIN categorias AS c ON p.id_categoria = c.id_categoria
-                    ");
-                                        $sql_productos->execute();
-                                        $Productos = $sql_productos->fetchAll(PDO::FETCH_ASSOC);
-
-                                        foreach ($Productos as $producto) { ?>
-                                            <tr>
-                                                <td> <?php echo $producto['id_producto'] ?></td>
-                                                <td> <?php echo $producto['n_producto'] ?></td>
-                                                <td> <?php echo $producto['nombre'] ?> </td>
-                                                <td> <?php echo $producto['descripcion'] ?></td>
-                                                <td> <?php echo $producto['nombre_categoria'] ?></td>
-                                                <td>
-                                                    <a href="variante.php?id_producto=<?php echo $producto['id_producto']; ?>" type="button" class="btn bg-orange btn-flat margin"> <i class="fas fa-user-edit"></i></a>
-                                                    <a href="../../config/mercadolibre.php?id_producto=<?php echo $producto['id_producto']; ?>"
-                                                        type="button"
-                                                        class="btn bg-yellow btn-flat margin borrar_registro"
-                                                        onclick="confirmarAccion(event, this.href)">
-                                                        <i class="fas fa-solid fa-handshake"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>N_Producto</th>
-                                            <th>Nombre</th>
-                                            <th>Descripcion</th>
-                                            <th>Categoria</th>
-                                            <th>acciones</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
+                            <!-- /.card -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+                    <!-- /.row -->
+                </div><!--/. container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
 
-            </div><!--/. container-fluid -->
-        </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-
-
-</div>
-<!-- ./wrapper -->
-<script src="../admin/js/app.js"></script>
-
+    <!-- ./wrapper -->
+    <script src="../admin/js/app.js"></script>
 </body>
 
 </html>

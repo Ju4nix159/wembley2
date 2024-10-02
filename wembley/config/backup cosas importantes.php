@@ -13,19 +13,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['añadir_producto'])) {
     $n_producto = $_POST["n_producto"];
     $nombreProducto = $_POST["nombre"];
     $descripcionProducto = $_POST["descripcion"];
+    $precioProducto = $_POST["precio"];
+    $destacadoProducto = $_POST["destacado"];
     $nuevaCategoria = $_POST["id_categoria"];
+    $stock = $_POST["stock"];
 
-    $sql = $con->prepare("INSERT INTO productos (n_producto, nombre, descripcion, id_categoria) 
-    VALUES (:n_producto, :nombre, :descripcion, :id_categoria)");
+    // Insertar el producto en la tabla de productos
+    $rutaImagenes = array(); // Array para almacenar las rutas de las imágenes
+
+
+
+    // Insertar el producto en la tabla de productos
+    $sql = $con->prepare("INSERT INTO productos (n_producto, nombre, descripcion, precio, destacado, id_categoria, stock) 
+    VALUES (:n_producto, :nombre, :descripcion, :precio, :destacado, :id_categoria, :stock)");
     $sql->bindParam(':n_producto', $n_producto, PDO::PARAM_INT);
     $sql->bindParam(':nombre', $nombreProducto, PDO::PARAM_STR);
     $sql->bindParam(':descripcion', $descripcionProducto, PDO::PARAM_STR);
+    $sql->bindParam(':precio', $precioProducto, PDO::PARAM_STR);
+    $sql->bindParam(':destacado', $destacadoProducto, PDO::PARAM_INT);
     $sql->bindParam(':id_categoria', $nuevaCategoria, PDO::PARAM_INT);
+    $sql->bindParam(':stock', $stock, PDO::PARAM_INT);
     $sql->execute();
 
+    // Obtener el ID del producto recién insertado
     $id_producto = $con->lastInsertId();
 
+    // Ruta donde se almacenarán las imágenes
+    $rutaCarpeta = "../../imagen/botines/$id_producto/";
 
+    // Verificar si la carpeta no existe y crearla si es necesario
+    if (!file_exists($rutaCarpeta)) {
+        mkdir($rutaCarpeta, 0777, true); // Crear carpeta recursivamente
+    }
+
+
+    if (isset($_FILES['referencia_imagen'])) {
+        // Ruta donde se almacenarán las imágenes
+        $rutaCarpeta = "../../imagen/botines/$id_producto/";
+
+        // Subir cada imagen y guardar su ruta en el array
+        // Subir cada imagen y guardar su ruta en el array
+        foreach ($_FILES['referencia_imagen']['tmp_name'] as $key => $tmp_name) {
+            $nombreArchivo = $_FILES['referencia_imagen']['name'][$key];
+            $rutaDestino = $rutaCarpeta . $nombreArchivo;
+            move_uploaded_file($_FILES['referencia_imagen']['tmp_name'][$key], $rutaDestino);
+            $rutaImagenes[] = $nombreArchivo; // Agregar la ruta al array
+        }
+    }
+
+    // Insertar las imágenes en la tabla de imágenes
+    $id_imagen = 1;
+    foreach ($rutaImagenes as $ruta) {
+
+        $sql_imagen = $con->prepare("INSERT INTO imagenes (id_imagen, id_producto, nombre_imagen) VALUES (:id_imagen, :id_producto, :nombre_imagen)");
+        $sql_imagen->bindParam(':id_imagen', $id_imagen, PDO::PARAM_INT);
+        $sql_imagen->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
+        $sql_imagen->bindParam(':nombre_imagen', $ruta, PDO::PARAM_STR);
+        $sql_imagen->execute();
+        $id_imagen++;
+    }
+
+
+
+    // Redirigir a la página de productos después de realizar los cambios
     echo '<script>';
     echo 'alert("Cambios realizados");';
     echo 'window.location.href = "productos.php";';
