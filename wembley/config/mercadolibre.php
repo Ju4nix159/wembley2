@@ -53,7 +53,7 @@ curl_setopt_array($curl, [
 	CURLOPT_CUSTOMREQUEST => $method,
 	CURLOPT_HTTPHEADER => [
         "Content-Type:application/json",
-		"Authorization:Bearer APP_USR-4642462319839612-020509-1d0a8728e67f11884d815c59558af378-478680085"
+		"api key"
 	],
 ]);
 $response = curl_exec($curl);
